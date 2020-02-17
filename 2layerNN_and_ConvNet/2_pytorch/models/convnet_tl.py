@@ -2,10 +2,10 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+from torch.vision import models
 
 class CNN(nn.Module):
-    def __init__(self, im_size, hidden_dim,hidden_dim2,hidden_dim3, kernel_size, n_classes):
+    def __init__(self, im_size, hidden_dim,hidden_dim2, kernel_size, n_classes):
         '''
         Create components of a CNN classifier and initialize their weights.
 
@@ -21,21 +21,22 @@ class CNN(nn.Module):
         self.conv2 = nn.Conv2d(16,32,3,padding=1)
         self.conv3 = nn.Conv2d(32,64,3,padding=1)
         self.conv4 = nn.Conv2d(64,128,3,padding=1)
-        
+
         self.pool = nn.MaxPool2d(2,2)
         #To calcualte dimension of fully connected, we flatted output of last pooling layer so it has dimension (_*64(depth))
         #_ is Width: how muchbox has shruken. 3 pooling layers mean height/2^3
-        
+
         hout_size = H/(2**4)
         print(H)
         print(hout_size)
-        
+
         self.fc1  = nn.Linear(hout_size*hout_size*128,hidden_dim)
         self.fc2  = nn.Linear(hidden_dim,hidden_dim2)
         self.fc3  = nn.Linear(hidden_dim2,n_classes)
 #         self.out  = nn.Softmax(dim=1)
-        self.dropout1 = nn.Dropout(p=0.25)
-        self.dropout2 = nn.Dropout(p=0.2)
+        self.dropout = nn.Dropout(p=0.25)
+
+
 
     def forward(self, images):
         '''
@@ -57,14 +58,14 @@ class CNN(nn.Module):
         x = self.pool(F.relu(self.conv2(x)))
         x = self.pool(F.relu(self.conv3(x)))
         x = self.pool(F.relu(self.conv4(x)))
-        
+
         #FLatten the output to a vector
         x = x.view(x.shape[0],-1)
-        x = self.dropout1(x)
+        x=self.dropout(x)
         x = F.relu(self.fc1(x))
-        x = self.dropout1(x)
-        x = F.relu(self.fc2(x))
-        x = self.dropout2(x)
+        x = self.dropout(x)
+        x = self.fc2(x)
+        x = self.dropout(x)
         x = self.fc3(x)
         scores = x
 #         scores = self.out(x)
@@ -75,4 +76,3 @@ class CNN(nn.Module):
         #                             END OF YOUR CODE                              #
         #############################################################################
         return scores
-

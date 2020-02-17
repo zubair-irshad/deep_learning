@@ -10,12 +10,13 @@ import torch.optim as optim
 from torchvision import transforms
 from torch.autograd import Variable
 from cifar10 import CIFAR10
+import torchvision.models as models
 
 # You should implement these (softmax.py, twolayernn.py, convnet.py)
-import models.softmax 
-import models.twolayernn
-import models.convnet
-import models.mymodel
+# import models.softmax 
+# import models.twolayernn
+# import models.convnet
+# import models.mymodel
 
 # Training settings
 parser = argparse.ArgumentParser(description='CIFAR-10 Example')
@@ -30,9 +31,9 @@ parser.add_argument('--batch-size', type=int, metavar='N',
                     help='input batch size for training')
 parser.add_argument('--epochs', type=int, metavar='N',
                     help='number of epochs to train')
-parser.add_argument('--model',
-                    choices=['softmax', 'convnet', 'twolayernn', 'mymodel'],
-                    help='which model to train/evaluate')
+# parser.add_argument('--model',
+#                     choices=['softmax', 'convnet', 'twolayernn', 'mymodel'],
+#                     help='which model to train/evaluate')
 parser.add_argument('--hidden-dim', type=int,
                     help='number of hidden features/activations')
 
@@ -91,19 +92,41 @@ val_loader = torch.utils.data.DataLoader(val_dataset,
 test_loader = torch.utils.data.DataLoader(test_dataset,
                  batch_size=args.batch_size, shuffle=True, **kwargs)
 
+model = models.densenet161(pretrained=True)
+
+#Freeze parameters
+
+for param in model.parameters():
+    param.require_grad = False
+    
+from collections import OrderedDict
+
+classifier = nn.Sequential(
+             OrderedDict([
+             ('fc1',nn.Linear(1024,512)),
+             ('r1', nn.ReLU()),
+             ('d1', nn.Dropout2d(p=0.2)),
+             ('fc2', nn.Linear(512,128))
+             ]))
+
+model.classifier = classifier
+#Define our own classifier
+
+    
+    
 # Load the model
-if args.model == 'softmax':
-    model = models.softmax.Softmax(im_size, n_classes)
-elif args.model == 'twolayernn':
-    model = models.twolayernn.TwoLayerNN(im_size, args.hidden_dim, n_classes)
-elif args.model == 'convnet':
-    model = models.convnet.CNN(im_size, args.hidden_dim,args.hidden_dim2, args.hidden_dim3, args.kernel_size,
-                               n_classes)
-elif args.model == 'mymodel':
-    model = models.mymodel.MyModel(im_size, args.hidden_dim,
-                               args.kernel_size, n_classes)
-else:
-    raise Exception('Unknown model {}'.format(args.model))
+# if args.model == 'softmax':
+#     model = models.softmax.Softmax(im_size, n_classes)
+# elif args.model == 'twolayernn':
+#     model = models.twolayernn.TwoLayerNN(im_size, args.hidden_dim, n_classes)
+# elif args.model == 'convnet':
+#     model = models.convnet.CNN(im_size, args.hidden_dim,args.hidden_dim2, args.hidden_dim3, args.kernel_size,
+#                                n_classes)
+# elif args.model == 'mymodel':
+#     model = models.mymodel.MyModel(im_size, args.hidden_dim,
+#                                args.kernel_size, n_classes)
+# else:
+#     raise Exception('Unknown model {}'.format(args.model))
 # cross-entropy loss function
 criterion = nn.CrossEntropyLoss()
 if args.cuda:
@@ -113,7 +136,7 @@ if args.cuda:
 # TODO: Initialize an optimizer from the torch.optim package using the
 # appropriate hyperparameters found in args. This only requires one line.
 #############################################################################
-optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum =args.momentum, weight_decay = args.weight_decay)
+optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum =args.momentum)
 # optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 
 def train(epoch):
@@ -192,4 +215,3 @@ evaluate('test', verbose=True)
 torch.save(model, args.model + '.pt')
 # Later you can call torch.load(file) to re-load the trained model into python
 # See http://pytorch.org/docs/master/notes/serialization.html for more details
-
