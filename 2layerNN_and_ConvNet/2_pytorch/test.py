@@ -55,7 +55,7 @@ else:
 criterion = nn.CrossEntropyLoss()
 if args.cuda:
     model.cuda()
-
+m = nn.Upsample(scale_factor=8)
  
 def evaluate():
     '''
@@ -69,6 +69,8 @@ def evaluate():
         if args.cuda:
             data= data.cuda()
         data = Variable(data, volatile=True)
+        if(args.model =='cifar_resnet.pt'):
+            data = m(data)
         output = model(data)
         pred = output.data.max(1, keepdim=True)[1]
         print(pred.shape)

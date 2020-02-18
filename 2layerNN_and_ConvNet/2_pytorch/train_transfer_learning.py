@@ -92,25 +92,30 @@ val_loader = torch.utils.data.DataLoader(val_dataset,
 test_loader = torch.utils.data.DataLoader(test_dataset,
                  batch_size=args.batch_size, shuffle=True, **kwargs)
 
-model = models.densenet161(pretrained=True)
+model = models.resnet18(pretrained=True)
 
 #Freeze parameters
 
-for param in model.parameters():
-    param.require_grad = False
+# for param in model.parameters():
+#     param.require_grad = False
     
 from collections import OrderedDict
 
-classifier = nn.Sequential(
+fc = nn.Sequential(
              OrderedDict([
-             ('fc1',nn.Linear(1024,512)),
-             ('r1', nn.ReLU()),
-             ('d1', nn.Dropout2d(p=0.2)),
-             ('fc2', nn.Linear(512,128))
+             ('fc1',nn.Linear(512*4,1024)),
+             ('d1', nn.Dropout2d(p=0.25)),
+             ('fc2', nn.Linear(1024,512)),
+             ('d2', nn.Dropout2d(p=0.25)),
+             ('fc3', nn.Linear(512,128)),
+             ('d3', nn.Dropout2d(p=0.25)),
+             ('fc4', nn.Linear(128,10))
              ]))
 
-model.classifier = classifier
+model.fc = fc
 #Define our own classifier
+
+m = nn.Upsample(scale_factor=8)
 
     
     
@@ -136,7 +141,7 @@ if args.cuda:
 # TODO: Initialize an optimizer from the torch.optim package using the
 # appropriate hyperparameters found in args. This only requires one line.
 #############################################################################
-optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum =args.momentum)
+optimizer = optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr, momentum =args.momentum)
 # optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 
 def train(epoch):
@@ -151,26 +156,36 @@ def train(epoch):
     for batch_idx, batch in enumerate(train_loader):
         # prepare data
         images, targets = Variable(batch[0]), Variable(batch[1])
+        images = m(images)
         if args.cuda:
             images, targets = images.cuda(), targets.cuda()
             
         optimizer.zero_grad()
-        output=model.forward(images)
+        output=model(images)
         loss = criterion(output,targets)
         loss.backward()
         optimizer.step()
         #############################################################################
         #                             END OF YOUR CODE                              #
         #############################################################################
+        # if batch_idx % args.log_interval == 0:
+        #     val_loss, val_acc = evaluate('val', n_batches=4)
+        #     train_loss = loss.data
+        #     examples_this_epoch = batch_idx * len(images)
+        #     epoch_progress = 100. * batch_idx / len(train_loader)
+        #     print('Train Epoch: {} [{}/{} ({:.0f}%)]\t'
+        #           'Train Loss: {:.6f}\tVal Loss: {:.6f}\tVal Acc: {}'.format(
+        #         epoch, examples_this_epoch, len(train_loader.dataset),
+        #         float(epoch_progress), float(train_loss), float(val_loss), float(val_acc)))
+
         if batch_idx % args.log_interval == 0:
-            val_loss, val_acc = evaluate('val', n_batches=4)
             train_loss = loss.data
             examples_this_epoch = batch_idx * len(images)
             epoch_progress = 100. * batch_idx / len(train_loader)
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\t'
-                  'Train Loss: {:.6f}\tVal Loss: {:.6f}\tVal Acc: {}'.format(
+                  'Train Loss: {:.6f}\t'.format(
                 epoch, examples_this_epoch, len(train_loader.dataset),
-                float(epoch_progress), float(train_loss), float(val_loss), float(val_acc)))
+                float(epoch_progress), float(train_loss)))
 
 def evaluate(split, verbose=False, n_batches=None):
     '''
@@ -189,6 +204,8 @@ def evaluate(split, verbose=False, n_batches=None):
         if args.cuda:
             data, target = data.cuda(), target.cuda()
         data, target = Variable(data, volatile=True), Variable(target)
+
+        data = m(data)
         output = model(data)
         loss += criterion(output, target).data
         # predict the argmax of the log-probabilities
@@ -209,9 +226,11 @@ def evaluate(split, verbose=False, n_batches=None):
 # train the model one epoch at a time
 for epoch in range(1, args.epochs + 1):
     train(epoch)
+
+torch.save(model, 'cifar_resnet.pt')    
 evaluate('test', verbose=True)
 
 # Save the model (architecture and weights)
-torch.save(model, args.model + '.pt')
+
 # Later you can call torch.load(file) to re-load the trained model into python
 # See http://pytorch.org/docs/master/notes/serialization.html for more details
