@@ -1,12 +1,6 @@
----
-layout:     page
-title:      Homework 1, Question 8
-permalink:  /Z3o9P26CwTPZZMDXyWYDj3/hw1-q8/
----
+# [CS 7643 Deep Learning - Section 1][5]
 
-# [CS 7643 Deep Learning - Homework 1][5]
-
-In this homework, we will learn how to implement backpropagation (or backprop) for 
+In this section, we will learn how to implement backpropagation (or backprop) for 
 “vanilla” neural networks (or Multi-Layer Perceptrons) and ConvNets.   
 You will begin by writing the forward and backward
 passes for different types of layers (including convolution and pooling),
@@ -101,19 +95,6 @@ different layer types, including convolution and pooling layers.
 The IPython notebook `convnet.ipynb` will walk you through the process of training
 a (shallow) convolutional neural network on CIFAR-10.
 
-**Deliverables**
-
-Zip the completed ipython notebooks and relevant files.
-
-PDF files created from each `.ipynb` using `nbconvert`.
-
-```bash
-cd 1_cs231n
-./collect_submission.sh
-```
-
-Submit the generated zip file `1_cs231n.zip` and PDF files as stated above.
-
 ## Part 2
 
 This part is similar to the first part except that you will now be using [PyTorch][3] to 
@@ -173,29 +154,8 @@ and save visualizations of the weights of the first hidden layer called `twolaye
 
 Repeat the above steps for a convnet. Model code is in `models/convnet.py` and the script to train convnet is  in `run_convnet.sh`. Making suitable modifications to `softmax-classifier.ipynb` and `filter-viz.ipynb`, save the plots as `twolayernn_lossvstrain.png` and `twolayernn_valaccuracy.png` and the filters learned as `convnet_gridfilt.png`.
 
-## Deliverables
 
-Submit the results by uploading a zip file called `2_pytorch.zip`.
-
-PDF file called `2_pytorch.pdf` containing all saved `.png` files.
-
-```bash
-cd 2_pytorch/
-./collect_submission.sh
-```
-
-The following files should be included:
-
-1. Model implementations `models/*.py`
-2. Training code `train.py`
-3. All of the shell scripts used to train the 3 models (`run_softmax.sh`, `run_twolayernn.sh`, `run_convnet.sh`)
-3. Learning curves (loss) and validation accuracy plots from Q8.3 and Q8.4.
-4. The version of `filter-viz.ipynb` used to genepointsrate convnet filter visualizations
-5. PDF files created for each subquestion as per deliverables.
-6. Log files for each model with test accuracy reported at the bottom
-
-
-### Q8.8 Experiment (Extra credit for 4803, regular credits for 7643: 10 points)
+### Q8.8 Experiment
 
 Experiment and try to get the best performance that you can on CIFAR-10 using a ConvNet.
 Submit your entry on a challenge hosted on [EvalAI](https://evalai.cloudcv.org/web/challenges/challenge-page/431/overview). The website will show a live leader board, so you can see how your implementation is doing compared to others. In order to prevent you from overfitting to the test data, the website limits the number of submissions to 3 per day, and only shows the leaderboard computed on 10% of the test data (so final standings may change). You will receive 5 pts regular credit for submitting something that beats chance, 5 points extra credit for beating the instructor/TA’s implementation.

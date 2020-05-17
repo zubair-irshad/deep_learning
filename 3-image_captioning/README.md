@@ -1,12 +1,6 @@
----
-layout:     page
-title:      Homework 3
-permalink:  /8cc2zXixdvAocq4v4upA9A/hw3/
----
+# [CS 4803/7643 Deep Learning - Section 3][1]
 
-# [CS 4803/7643 Deep Learning - Homework 3][1]
-
-In this homework, we will implement vanilla recurrent neural networks (RNNs) and Long-Short Term Memory (LSTM) RNNs, and apply them to image captioning on [COCO][3].
+In this section, we will implement vanilla recurrent neural networks (RNNs) and Long-Short Term Memory (LSTM) RNNs, and apply them to image captioning on [COCO][3].
 We will also build the forward pass of a Transformer for classification.
 
 Note that Parts 1-3 are adapted from [the Stanford CS231n course][2], and Part 4 is unique to Georgia Tech's course.
@@ -53,31 +47,6 @@ Here are a few pointers:
 
 ## Part 4: Classification with Transformers (15 points)
 Open the `Transformer_Classification.ipynb` Jupyter notebook, which will walk you through implementing a Transformer for classification in PyTorch. Note that you will need to include your code in `transformer.py` as a PDF when submitting this assignment (detailed below).
-
-**Note: we will be grading code for this question. The tests provided in the notebook are intended to help you get on the right track, but might not catch all possible mistakes, so make sure to follow the instructions carefully with your implementations!**
-
-## Submit your homework
-First, combine all of your PDFs into one PDF, in the following order:
-**Make sure that you have run all cells in each notebook and that the output is displayed in the PDFs.**
-
-1. Your solutions to questions in PS3
-2. Your RNN\_Captioning converted PDF
-3. Your LSTM\_Captioning converted PDF
-4. Your Transformer\_Classification converted PDF
-5. Your transformer.py code converted to a PDF
-
-Please use nbconvert or the 'Download as PDF' option in Jupyter to convert the notebook into PDFs.
-This PDF will be submitted under the HW3 designation in Gradescope.
-
-Run `collect_submission.sh`
-
-```
-./collect_submission.sh
-```
-Submit this ZIP to the HW3 Code designation in Gradescope.
-
-Although we will not run your notebook in grading, you still need to **submit the notebook with all the outputs you generated**. Sometimes it will inform us if we get any inconsistent results with respect to yours.
-
 
 References:
 

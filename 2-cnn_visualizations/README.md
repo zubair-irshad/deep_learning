@@ -1,6 +1,6 @@
-# [CS 7643 Deep Learning - Homework 2][1]
+# [CS 7643 Deep Learning - Section 2][1]
 
-In this homework, we will learn different applications in deep learning with respect to image gradients, including saliency maps, GradCAM, fooling images, class visualizations, and style transfer. This homework is divided into two major following parts:
+In this section, we will learn different applications in deep learning with respect to image gradients, including saliency maps, GradCAM, fooling images, class visualizations, and style transfer. This homework is divided into two major following parts:
 
 - Understand network visualization and implement saliency maps, GradCAM, fooling images, class visualizations.
 - Understand and implement style transfer.
@@ -112,20 +112,6 @@ Just run this block and generate the outputs. If you previous implementation is 
 Submit the notebook you finished with all the generated outputs.
 
 For each of the loss function in part 2, **you will need to pass the unit test to receive full credits, otherwise it will be 0.** For the final output you will be expected to generate the images similar to the output to receive the full credits.  
-
-
-## Submit your homework
-
-Run `collect_submission.sh`
-
-```
-./collect_submission.sh
-```
-
-which should generate the off-the-shelf runnable notebook with all of your implementation.
-
-Although we will run your notebook in grading, but you still need to **submit the notebook with all the outputs you generated**. Sometimes it will inform us if we get any inconsistent results with respect to yours.
-
 
 
 [1]: https://www.cc.gatech.edu/classes/AY2018/cs7643_fall/
